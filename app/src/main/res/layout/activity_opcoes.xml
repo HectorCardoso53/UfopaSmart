@@ -130,10 +130,11 @@
 
                 <Button
                     android:id="@+id/btnSegurança"
-                    android:layout_width="190dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/background_button_selector"
+                    android:layout_width="180dp"
+                    android:layout_height="45dp"
                     android:text="Entrar"
+                    app:backgroundTint="#2D93BA"
+                    app:cornerRadius="40dp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView"
                     app:layout_constraintEnd_toEndOf="@+id/imageView"
                     app:layout_constraintHorizontal_bias="0.606"
@@ -375,9 +376,10 @@
                 <Button
                     android:id="@+id/btnUrbanismo"
                     android:layout_width="180dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/background_button_selector"
+                    android:layout_height="45dp"
                     android:text="Entrar"
+                    app:backgroundTint="#2D93BA"
+                    app:cornerRadius="40dp"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView3"
                     app:layout_constraintEnd_toStartOf="@+id/guideline99"
@@ -449,13 +451,14 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </LinearLayout>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav"
         android:layout_width="wrap_content"
-        android:layout_gravity="start"
         android:layout_height="match_parent"
-        app:menu="@menu/menu_bar"
+        android:layout_gravity="start"
+        android:visibility="visible"
         app:headerLayout="@layout/header"
-        />
+        app:menu="@menu/menu_bar" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

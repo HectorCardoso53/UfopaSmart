@@ -9,26 +9,25 @@
         <item
             android:id="@+id/seguranca"
             android:title="Segurança"/>
+        <item
+            android:id="@+id/mAmbiente"
+            android:title="Urbanismo"/>
 
         <item
             android:id="@+id/saude"
             android:title="Saude"/>
 
         <item
-            android:id="@+id/educacao"
-            android:title="Educação"/>
-
-        <item
-            android:id="@+id/mAmbiente"
-            android:title="Urbanismo"/>
+            android:id="@+id/turismo"
+            android:title="Turismo"/>
 
         <item
             android:id="@+id/cultura"
             android:title="Cultura"/>
-
         <item
-            android:id="@+id/turismo"
-            android:title="Turismo"/>
+            android:id="@+id/educacao"
+            android:title="Educação"/>
+
 
     </group>
 

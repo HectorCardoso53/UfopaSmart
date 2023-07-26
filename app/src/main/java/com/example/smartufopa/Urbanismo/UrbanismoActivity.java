@@ -17,6 +17,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -96,6 +98,7 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         progressBar = findViewById(R.id.progressBar2);
         imageView13 = findViewById(R.id.imageView13);
         progressBar.setVisibility(View.INVISIBLE);
+        imageView = findViewById(R.id.ic_voltar233);
 
         buttonSelecionar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +113,6 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (imageUri !=null){
                     uploadToFirebase(imageUri);
                 }else {
@@ -120,7 +122,6 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         });
 
 
-        imageView = findViewById(R.id.ic_voltar233);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,6 +141,9 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         autoCompleteTextView = findViewById(R.id.autoCompleteOcorrido1);
         edtMessage = findViewById(R.id.edtdescricao);
         btEnviar_dados = findViewById(R.id.btEnviar_dados);
+        btEnviar_dados.setEnabled(false);
+        edtNome.addTextChangedListener(campoPreenchido);
+        autoCompleteTextView.addTextChangedListener(campoPreenchido);
 
 
         btEnviar_dados.setOnClickListener(new View.OnClickListener() {
@@ -147,8 +151,8 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
             public void onClick(View view) {
                  userName = edtNome.getText().toString().trim();
                  ocorrido = autoCompleteTextView.getText().toString().trim();
-                if (userName.isEmpty()||ocorrido.isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Preencha todos os campos",Toast.LENGTH_SHORT).show();
+                if (userName.isEmpty()||ocorrido.isEmpty()||imageUri ==null){
+                    Toast.makeText(getApplicationContext(),"Preencha todos os campos\n ou selecione a imagem",Toast.LENGTH_SHORT).show();
                 }else {
                     addItem();
                 }
@@ -158,7 +162,28 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
     }
 
 
+    private TextWatcher campoPreenchido = new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        // Verificar se os campos necessários estão preenchidos
+        boolean nomePreenchido = edtNome.getText().toString().trim().length() > 0;
+        boolean ocorridoPreenchido = autoCompleteTextView.getText().toString().trim().length() > 0;
+
+        // Habilitar o botão se ambos os campos estiverem preenchidos
+        btEnviar_dados.setEnabled(nomePreenchido && ocorridoPreenchido);
+
+    }
+};
    private void uploadToFirebase(Uri uri) {
     StorageReference fileRef = firebaseStorage.getReference().child("Images")
             .child(System.currentTimeMillis()+"");
@@ -175,7 +200,7 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
                             .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Toast.makeText(getApplicationContext(),"Suecesso",Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(getApplicationContext(),"Suecesso",Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -316,6 +341,19 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         edtNome.setText("");
         autoCompleteTextView.setText("");
         edtMessage.setText("");
+        imageUri = null;
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (imageUri !=null){
+                    uploadToFirebase(imageUri);
+                }else {
+                    Toast.makeText(getApplicationContext(),"Selecione a imagem",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
     }
 
 

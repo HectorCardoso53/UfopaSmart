@@ -346,7 +346,7 @@ public class DenunciaActivity extends AppCompatActivity implements LocationListe
             sendIntent.putExtra(Intent.EXTRA_TEXT, whatsAppMessage);
             sendIntent.setType("text/plain");
             sendIntent.setPackage("com.whatsapp");
-            startActivity(sendIntent);
+            //startActivity(sendIntent);
             System.out.println("8888888888888888888888888888888888888888888888888888888888888888888");
             finish();
         }catch (Exception e){

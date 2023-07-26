@@ -248,7 +248,7 @@ public class OcorrenciaActivity extends AppCompatActivity implements LocationLis
         String userLocation = "http://maps.google.com/maps?daddr="+location.getLatitude()+","+location.getLongitude();
 
         //Descrição
-        String urlWhatsApp = "http://api.whatsapp.com/send?phone="+toNumber +"&text="+Nome+"\n"+"Ocorrido: "+Ocorrido+"\n"+"Descrição: "+Descricao
+        String urlWhatsApp = "http://api.whatsapp.com/send?phone="+toNumber +"&text="+"Nome: "+Nome+"\n"+"Ocorrido: "+Ocorrido+"\n"+"Descrição: "+Descricao
                 +"\n"+"Localização : "+userLocation;
 
         ///Pedindo permissão do usuario
@@ -354,7 +354,7 @@ public class OcorrenciaActivity extends AppCompatActivity implements LocationLis
             sendIntent.putExtra(Intent.EXTRA_TEXT, whatsAppMessage);
             sendIntent.setType("text/plain");
             sendIntent.setPackage("com.whatsapp");
-            startActivity(sendIntent);
+            //startActivity(sendIntent);
             // Toast.makeText(this,""+location.getLatitude()+","+location.getLongitude(),Toast.LENGTH_SHORT).show();
         }catch (Exception e){
             e.printStackTrace();
