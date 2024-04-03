@@ -42,9 +42,8 @@ import com.google.firebase.database.ValueEventListener;
 public class OpcoesActivity extends AppCompatActivity {
     Button btnSeguranca,btnUrnbanismo;
     FirebaseAuth mAuth;
-
-
     private final String TAG = this.getClass().getName();
+
     private long backexpressed;
 
     DrawerLayout drawerLayout;

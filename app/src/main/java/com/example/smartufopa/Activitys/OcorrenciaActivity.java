@@ -238,7 +238,7 @@ public class OcorrenciaActivity extends AppCompatActivity implements LocationLis
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         Date hora = Calendar.getInstance().getTime(); // Ou qualquer outra forma que tem
         String horaformatada = sdf.format(hora);
-        String toNumber = "+55093991959446";
+        String toNumber = "+55093991477581";
 
         String Nome = edtNome.getText().toString();
         String Ocorrido = autoCompleteTextView.getText().toString();
@@ -348,14 +348,13 @@ public class OcorrenciaActivity extends AppCompatActivity implements LocationLis
         try {
             //destino
             String whatsAppMessage = "http://maps.google.com/maps?daddr=" +location.getLatitude() + "," +location.getLongitude();
-            //System.out.println("22222222222222222222222222222222222222222222222222222222222222222222222222222222222");
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, whatsAppMessage);
             sendIntent.setType("text/plain");
             sendIntent.setPackage("com.whatsapp");
-            //startActivity(sendIntent);
-            // Toast.makeText(this,""+location.getLatitude()+","+location.getLongitude(),Toast.LENGTH_SHORT).show();
+            startActivity(sendIntent);
+             Toast.makeText(this,""+location.getLatitude()+","+location.getLongitude(),Toast.LENGTH_SHORT).show();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -364,6 +363,7 @@ public class OcorrenciaActivity extends AppCompatActivity implements LocationLis
     @Override
     public void onLocationChanged(List<Location> locations) {
         LocationListener.super.onLocationChanged(locations);
+
     }
 
     @Override

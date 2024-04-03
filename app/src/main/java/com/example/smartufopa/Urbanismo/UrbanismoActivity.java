@@ -57,24 +57,21 @@ import com.google.firebase.storage.UploadTask;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.normal.TedPermission;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UrbanismoActivity extends AppCompatActivity implements LocationListener {
     private ImageView imageView;
-
+    private static final int PICK_IMAGE_REQUEST = 1;
     EditText edtNome;
     Button btEnviar_dados;
-
     Location location;
     LocationManager locationManager;
-
     private Button uploadBtn;
     private Button buttonSelecionar;
     private ImageView imageView13;
-
-
     FirebaseDatabase firebaseDatabase;
     FirebaseStorage firebaseStorage;
     private Uri imageUri;
@@ -82,6 +79,7 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
     ProgressBar progressBar;
     String userName,ocorrido;
 
+    private boolean uploadPressionado = false;
     AutoCompleteTextView autoCompleteTextView, edtMessage;
 
     @Override
@@ -106,22 +104,10 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
                 Intent galleryIntent = new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent,2);
+                startActivityForResult(Intent.createChooser(galleryIntent, "Selecione uma imagem"), PICK_IMAGE_REQUEST);
+                //startActivityForResult(galleryIntent,2);
             }
         });
-
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (imageUri !=null){
-                    uploadToFirebase(imageUri);
-                }else {
-                    Toast.makeText(getApplicationContext(),"Selecione a imagem",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,17 +128,39 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         edtMessage = findViewById(R.id.edtdescricao);
         btEnviar_dados = findViewById(R.id.btEnviar_dados);
         btEnviar_dados.setEnabled(false);
+
+        TextWatcher campoPreenchido = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // Verificar se os campos necessários estão preenchidos
+                boolean nomePreenchido = edtNome.getText().toString().trim().length() > 0;
+                boolean ocorridoPreenchido = autoCompleteTextView.getText().toString().trim().length() > 0;
+
+                // Habilitar o botão se ambos os campos estiverem preenchidos
+                btEnviar_dados.setEnabled(nomePreenchido && ocorridoPreenchido );
+            }
+        };
+
         edtNome.addTextChangedListener(campoPreenchido);
         autoCompleteTextView.addTextChangedListener(campoPreenchido);
-
 
         btEnviar_dados.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                  userName = edtNome.getText().toString().trim();
                  ocorrido = autoCompleteTextView.getText().toString().trim();
-                if (userName.isEmpty()||ocorrido.isEmpty()||imageUri ==null){
-                    Toast.makeText(getApplicationContext(),"Preencha todos os campos\n ou selecione a imagem",Toast.LENGTH_SHORT).show();
+                if (userName.isEmpty()||ocorrido.isEmpty()||imageUri ==null ){
+                    Toast.makeText(getApplicationContext(),"Preencha todos os campos\n ou selecione uma imagem",Toast.LENGTH_SHORT).show();
                 }else {
                     addItem();
                 }
@@ -161,77 +169,53 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
 
     }
 
-
-    private TextWatcher campoPreenchido = new TextWatcher() {
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable editable) {
-        // Verificar se os campos necessários estão preenchidos
-        boolean nomePreenchido = edtNome.getText().toString().trim().length() > 0;
-        boolean ocorridoPreenchido = autoCompleteTextView.getText().toString().trim().length() > 0;
-
-        // Habilitar o botão se ambos os campos estiverem preenchidos
-        btEnviar_dados.setEnabled(nomePreenchido && ocorridoPreenchido);
-
-    }
-};
    private void uploadToFirebase(Uri uri) {
-    StorageReference fileRef = firebaseStorage.getReference().child("Images")
-            .child(System.currentTimeMillis()+"");
-    fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-        @Override
-        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-            fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        if (imageUri !=null) {
+            StorageReference fileRef = firebaseStorage.getReference().child("Images")
+                    .child(System.currentTimeMillis() + "");
+            fileRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onSuccess(Uri uri) {
-                    model.setImageUrl(uri.toString());
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            model.setImageUrl(uri.toString());
+                            firebaseDatabase.getReference().child("Usuario").child("Images")
+                                    .push()
+                                    .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
 
-                    firebaseDatabase.getReference().child("Usuario").child("Images")
-                            .push()
-                            .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    //Toast.makeText(getApplicationContext(),"Suecesso",Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(),"falha",Toast.LENGTH_SHORT).show();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getApplicationContext(), "falha", Toast.LENGTH_SHORT).show();
 
-                                }
-                            });
+                                        }
+                                    });
 
+                            progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getApplicationContext(), "Foto salva com sucesso", Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    });
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
                     progressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getApplicationContext(),"Foto salva com sucesso",Toast.LENGTH_SHORT).show();
-
-
+                    Toast.makeText(getApplicationContext(), "Falha ao fazer upload", Toast.LENGTH_SHORT).show();
                 }
             });
         }
-    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-        @Override
-        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-    }).addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception e) {
-            progressBar.setVisibility(View.INVISIBLE);
-            Toast.makeText(getApplicationContext(),"Falha ao fazer upload",Toast.LENGTH_SHORT).show();
-        }
-    });
     }
-
-
 
     private void minhaLocalizacao() {
         PermissionListener permissionlistener = new PermissionListener() {
@@ -274,7 +258,7 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         return bestLocation;
     }
 
-    private void addItem() {
+    private void  addItem() {
         final ProgressDialog dialog = ProgressDialog.show(UrbanismoActivity.this,"Adicionando item","Por favor aguarde");
 
          String userName = edtNome.getText().toString().trim();
@@ -342,20 +326,7 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         autoCompleteTextView.setText("");
         edtMessage.setText("");
         imageUri = null;
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (imageUri !=null){
-                    uploadToFirebase(imageUri);
-                }else {
-                    Toast.makeText(getApplicationContext(),"Selecione a imagem",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-
     }
-
 
     private void Locaiom() {
         LocationRequest request = LocationRequest.create();
@@ -389,9 +360,14 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode ==2 && resultCode ==RESULT_OK && data != null){
+        if (requestCode ==PICK_IMAGE_REQUEST && resultCode ==RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
-            imageView13.setImageURI(imageUri);
+            try {
+                imageView13.setImageURI(imageUri);
+                uploadToFirebase(imageUri);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }
     }
@@ -412,13 +388,5 @@ public class UrbanismoActivity extends AppCompatActivity implements LocationList
         }
         return super.dispatchTouchEvent( event );
     }
-    /*
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
-        return super.dispatchTouchEvent(ev);
-    }*/
+
 }

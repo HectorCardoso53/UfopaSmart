@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         tools:context=".Urbanismo.UrbanismoActivity">
 
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar2"
             android:layout_width="match_parent"
@@ -19,6 +20,7 @@
             android:background="#46C146"
             android:elevation="3dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:titleTextColor="@color/white">
@@ -28,12 +30,25 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/ic_back_2"
                 app:layout_constraintBottom_toBottomOf="@+id/toolbar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/toolbar" />
-        </androidx.appcompat.widget.Toolbar>
 
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Faça seu Registro"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView13"
+                app:layout_constraintEnd_toStartOf="@+id/guideline85"
+                app:layout_constraintStart_toStartOf="@+id/guideline84"
+                app:layout_constraintTop_toTopOf="@+id/guideline70" />
+
+        </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtInputLayoutNome"
@@ -126,12 +141,14 @@
 
         <ImageView
             android:id="@+id/imageView13"
-            android:layout_width="0dp"
+            android:layout_width="232dp"
             android:layout_height="150dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline83"
             app:layout_constraintEnd_toStartOf="@+id/guideline85"
+            app:layout_constraintHorizontal_bias="0.492"
             app:layout_constraintStart_toStartOf="@+id/guideline84"
             app:layout_constraintTop_toTopOf="@+id/guideline70"
+            app:layout_constraintVertical_bias="1.0"
             app:srcCompat="@drawable/log_atualizado" />
 
         <Button
@@ -139,6 +156,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="upload"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/guideline86"
             app:layout_constraintEnd_toStartOf="@+id/guideline88"
             app:layout_constraintStart_toStartOf="@+id/guideline84"
@@ -150,26 +168,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/guideline86"
-            app:layout_constraintEnd_toStartOf="@+id/buttonSelecionar"
-            app:layout_constraintStart_toEndOf="@+id/upload_btn"
-            app:layout_constraintTop_toBottomOf="@+id/imageView13" />
+            app:layout_constraintEnd_toStartOf="@+id/guideline87"
+            app:layout_constraintStart_toStartOf="@+id/guideline88"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSelecionar" />
 
         <Button
             android:id="@+id/buttonSelecionar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="selecionar"
+            android:text="selecionar \n imagem"
             app:layout_constraintBottom_toTopOf="@+id/guideline86"
             app:layout_constraintEnd_toStartOf="@+id/guideline85"
-            app:layout_constraintStart_toStartOf="@+id/guideline87"
-            app:layout_constraintTop_toTopOf="@+id/guideline83" />
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="@+id/guideline84"
+            app:layout_constraintTop_toTopOf="@+id/guideline83"
+            app:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline70"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.121751025" />
+            app:layout_constraintGuide_percent="0.09" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline90"
@@ -183,7 +203,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.39" />
+            app:layout_constraintGuide_percent="0.42" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline89"
@@ -239,7 +259,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.33" />
+            app:layout_constraintGuide_percent="0.3" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline84"
@@ -268,6 +288,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.61" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

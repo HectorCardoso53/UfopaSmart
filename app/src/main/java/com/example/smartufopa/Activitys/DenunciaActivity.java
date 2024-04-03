@@ -103,12 +103,9 @@ public class DenunciaActivity extends AppCompatActivity implements LocationListe
                     metodo1(telefone);
                     metodo2(endereco);
 
-                    // ...
                 } else {
                     // O nó não existe para o usuário atual
-                    // Trate o caso adequadamente
                     System.out.println("Não existe");
-                    // ...
                 }
             }
 
@@ -158,13 +155,10 @@ public class DenunciaActivity extends AppCompatActivity implements LocationListe
     }
 
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.R)
     @SuppressLint("MissingPermission")
 
     private void ocorrencia(View c) throws UnsupportedEncodingException {
-
 
         //Data
         @SuppressLint("SimpleDateFormat") SimpleDateFormat formataData = new SimpleDateFormat("dd-MM-yyyy");
@@ -175,83 +169,83 @@ public class DenunciaActivity extends AppCompatActivity implements LocationListe
         Date hora = Calendar.getInstance().getTime(); // Ou qualquer outra forma que tem
         String horaformatada = sdf.format(hora);
 
-        String toNumber = "+55093991959446";
+        String toNumber = "+55093991477581";
 
         String Ocorrido = autoCompleteTextView.getText().toString();
         String Descricao = autoCompleteTextDenuncia.getText().toString();
         //Localização do ususario
         Location location = getLastKnownLocation();
-        System.out.println("77777777777777777777777777777777777777777777777777777777777777777");
-        String userLocation = "http://maps.google.com/maps?daddr="+location.getLatitude()+","+location.getLongitude();
+        if (location!=null){
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            System.out.println("77777777777777777777777777777777777777777777777777777777777777777");
+            String userLocation = "http://maps.google.com/maps?daddr="+latitude+","+longitude;
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //Descrição
-        String urlWhatsApp = "http://api.whatsapp.com/send?phone="+toNumber +"&text="+"Ocorrido: "+Ocorrido+"\n"+"Descrição: "+Descricao
-                +"\n"+"Localização : "+userLocation;
-
-        ///Pedindo permissão do usuario
-        if (ContextCompat.checkSelfPermission(DenunciaActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Locaiom();
-            System.out.println("5555555555555555555555555555555555555555555555555555555555555");
-
-        }else{
-            ActivityCompat.requestPermissions(DenunciaActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},100);
-        }
-
-        try {
-            if(!Ocorrido.isEmpty()&&!Descricao.isEmpty()){
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(urlWhatsApp));
-                startActivity(intent);
-                System.out.println("2222222222222222222222222222222222222222222222222222222222");
-                finish();
-                //Localização
-                locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,5,
-                        (LocationListener) DenunciaActivity.this);
-                final Toast toast = Toast.makeText(DenunciaActivity.this, "Sua Solicitação será enviada para a policia,Aguarde no local!", Toast.LENGTH_LONG);
-                // Exibe a mensagem por 10 segundos
-                CountDownTimer toastCountDown;
-                toastCountDown = new CountDownTimer(10000, 2000) {
-                    public void onTick(long millisUntilFinished) {
-                        toast.show();
-                    }
-                    public void onFinish() {
-                        toast.cancel();
-                    }
-                };
-                toast.show();
-                toastCountDown.start();
-                Dados_da_Denuncia user = new Dados_da_Denuncia(
-                        dataFormatada,
-                        horaformatada,
-                        Ocorrido,
-                        "Anônimo",
-                        telefone+"",
-                        endereco+"",
-                        userLocation,
-                        Descricao);
-                Call<Void> call1 = apiInterface.createUser(user);
-                call1.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        System.out.println("Sucesso");
-                        finish();
-                    }
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Log.d("Failed", "500");
-                        // Ocorreu uma falha na chamada de API
-                    }
-                });
-            }else {
-                Snackbar snackbar = Snackbar.make(c,"Preencha todos os campos",Snackbar.LENGTH_SHORT);
-                snackbar.show();
+            //Descrição
+            String urlWhatsApp = "http://api.whatsapp.com/send?phone="+toNumber +"&text="+"Ocorrido: "+Ocorrido+"\n"+"Descrição: "+Descricao
+                    +"\n"+"Localização : "+userLocation;
+            ///Pedindo permissão do usuario
+            if (ContextCompat.checkSelfPermission(DenunciaActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Locaiom();
+            }else{
+                ActivityCompat.requestPermissions(DenunciaActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},100);
             }
-        }catch (Exception e){
-            e.printStackTrace();
+            try {
+                if(!Ocorrido.isEmpty()&&!Descricao.isEmpty()){
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(urlWhatsApp));
+                    startActivity(intent);
+                    finish();
+                    //Localização
+                    locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,5,
+                            (LocationListener) DenunciaActivity.this);
+                    final Toast toast = Toast.makeText(DenunciaActivity.this, "Sua Solicitação será enviada para a policia,Aguarde no local!", Toast.LENGTH_LONG);
+                    // Exibe a mensagem por 10 segundos
+                    CountDownTimer toastCountDown;
+                    toastCountDown = new CountDownTimer(10000, 2000) {
+                        public void onTick(long millisUntilFinished) {
+                            toast.show();
+                        }
+                        public void onFinish() {
+                            toast.cancel();
+                        }
+                    };
+                    toast.show();
+                    toastCountDown.start();
+                    Dados_da_Denuncia user = new Dados_da_Denuncia(
+                            dataFormatada,
+                            horaformatada,
+                            Ocorrido,
+                            "Anônimo",
+                            telefone+"",
+                            endereco+"",
+                            userLocation,
+                            Descricao);
+                    Call<Void> call1 = apiInterface.createUser(user);
+                    call1.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            System.out.println("Sucesso");
+                            finish();
+                        }
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Log.d("Failed", "500");
+                            // Ocorreu uma falha na chamada de API
+                        }
+                    });
+                }else {
+                    Snackbar snackbar = Snackbar.make(c,"Preencha todos os campos",Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else {
+            Toast.makeText(this, "Localização não disponível", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -262,7 +256,7 @@ public class DenunciaActivity extends AppCompatActivity implements LocationListe
 
     private void metodo2(String endereco) {
         System.out.println("endereco: " + endereco);
-        
+
     }
 
 
